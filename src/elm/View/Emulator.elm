@@ -10,6 +10,7 @@ import Bootstrap.Utilities.Spacing as Spacing
 import GameBoy
 import Html exposing (Html, a, div, em, h1, h4, hr, i, kbd, p, small, span, strong, text)
 import Html.Attributes exposing (class, href, target)
+import Html.Lazy
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import View.Common exposing (errorModalView, romSelector, screen)
@@ -30,11 +31,11 @@ view canvasId model =
 
                 Just gameBoy ->
                     div []
-                        [ screen canvasId
-                        , emulationToolbar model.emulateOnAnimationFrame (GameBoy.isAPUEnabled gameBoy) model.frameTimes
+                        [ screen model.gameBoyScreen canvasId
+                        , Html.Lazy.lazy3 emulationToolbar model.emulateOnAnimationFrame (GameBoy.isAPUEnabled gameBoy) model.frameTimes
                         ]
     in
-    scaffolding leftContent projectDescription
+    scaffolding leftContent (Html.Lazy.lazy (always projectDescription) ())
 
 
 

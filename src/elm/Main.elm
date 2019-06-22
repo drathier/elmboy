@@ -16,7 +16,6 @@ import Html exposing (Html)
 import Json.Decode as Decode
 import Model exposing (Model)
 import Msg exposing (Msg(..))
-import Ports
 import Task
 import UI.KeyDecoder
 import Util
@@ -46,10 +45,12 @@ view model =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { gameBoy = Nothing
+      , gameBoyScreen = GameBoyScreen.empty
       , emulateOnAnimationFrame = False
       , frameTimes = []
       , errorModal = Nothing
       , debuggerEnabled = False
+      , skipNextFrame = False
       }
     , Cmd.none
     )
@@ -73,19 +74,20 @@ update msg model =
                                 |> Emulator.emulateCycles cyclesToEmulate
                                 |> GameBoy.drainBuffers
 
-                        setPixelsCmd =
+                        (shouldSkipNextFrame, gbScreen) =
                             case screen of
-                                Just a ->
-                                    Ports.setPixelsFromBatches { canvasId = canvasId, pixelBatches = GameBoyScreen.serializePixelBatches a }
+                                Just newScreen ->
+                                    if model.skipNextFrame then
+                                        (False, model.gameBoyScreen)
+
+                                    else
+                                        (True, newScreen)
 
                                 Nothing ->
-                                    Cmd.none
-
-                        queueAudioSamplesCmd =
-                            Ports.queueAudioSamples audioSamples
+                                    (False, model.gameBoyScreen)
                     in
-                    ( { model | gameBoy = Just emulatedGameBoy, frameTimes = time :: List.take 30 model.frameTimes }
-                    , Cmd.batch [ setPixelsCmd, queueAudioSamplesCmd ]
+                    ( { model | skipNextFrame = shouldSkipNextFrame, gameBoy = Just emulatedGameBoy, gameBoyScreen = gbScreen, frameTimes = time :: List.take 30 model.frameTimes }
+                    , Cmd.none
                     )
 
                 Nothing ->
