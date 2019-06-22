@@ -1,34 +1,12 @@
-module Component.Cartridge exposing (Cartridge, empty, fromBytes, readWord8, writeWord8)
+module Component.Cartridge exposing (empty, fromBytes, readWord8, writeWord8)
 
 import Array exposing (Array)
 import Bitwise
 import Component.Cartridge.CartridgeType as CartridgeType
-import Component.RAM as RAM exposing (RAM)
+import Component.RAM as RAM
+import Model exposing (Cartridge, MBC1BankingMode(..), MemoryBankController(..), RAM)
 import RomMetadata
 import Types exposing (MemoryAddress)
-
-
-type alias Cartridge =
-    { bytes : Array Int
-    , ram : RAM
-    , selectedRomBank : Int
-    , selectedRamBank : Int
-    , ramEnabled : Bool
-    , mbc1BankingMode : MBC1BankingMode
-    , memoryBankController : MemoryBankController
-    }
-
-
-type MemoryBankController
-    = ROM
-    | MBC1
-    | MBC3
-    | MBC5
-
-
-type MBC1BankingMode
-    = ROMBanking
-    | RAMBanking
 
 
 fromBytes : Array Int -> Maybe Cartridge

@@ -15,7 +15,8 @@ import Component.Joypad as Joypad
 import Component.PPU as PPU
 import Component.RAM as RAM
 import Component.Timer as Timer
-import GameBoy exposing (GameBoy)
+import GameBoy
+import Model exposing (GameBoy)
 import Types exposing (MemoryAddress)
 
 

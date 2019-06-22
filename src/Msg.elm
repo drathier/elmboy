@@ -1,12 +1,11 @@
 module Msg exposing (BackendMsg(..), FrontendMsg(..), ToBackend(..), ToFrontend(..), sendToBackend, sendToFrontend)
 
-import Component.Cartridge exposing (Cartridge)
 import Component.Joypad exposing (GameBoyButton)
 import File exposing (File)
-import GameBoy exposing (GameBoy)
 import Lamdera.Backend
 import Lamdera.Frontend
 import Lamdera.Types exposing (ClientId, Milliseconds, WsError)
+import Model exposing (Cartridge, GameBoy)
 
 
 type FrontendMsg

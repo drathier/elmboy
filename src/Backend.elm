@@ -1,9 +1,9 @@
 module Backend exposing (Model, app, init, update, updateFromFrontend)
 
 import Dict exposing (Dict)
-import GameBoy exposing (GameBoy)
 import Lamdera.Backend
 import Lamdera.Types exposing (ClientId)
+import Model exposing (GameBoy)
 import Msg exposing (..)
 
 

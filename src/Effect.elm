@@ -10,10 +10,8 @@ module Effect exposing
     , mapReader3
     )
 
-import Component.CPU exposing (Register16(..), Register8(..))
-import GameBoy exposing (GameBoy)
 
-
+import Model exposing (GameBoy)
 type alias Reader a =
     GameBoy -> ( a, GameBoy )
 

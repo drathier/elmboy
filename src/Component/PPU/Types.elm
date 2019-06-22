@@ -1,9 +1,5 @@
 module Component.PPU.Types exposing
-    ( Mode(..)
-    , PPU
-    , PPUInterrupt(..)
-    , Sprite
-    , setBackgroundPalette
+    ( setBackgroundPalette
     , setEmulateData
     , setLastCompleteFrame
     , setLcdStatus
@@ -24,59 +20,7 @@ module Component.PPU.Types exposing
 
 import Array exposing (Array)
 import Component.PPU.GameBoyScreen exposing (GameBoyScreen)
-import Component.RAM exposing (RAM)
-
-
-type alias Sprite =
-    { y : Int
-    , x : Int
-    , tileId : Int
-    , flags : Int
-    }
-
-
-type alias PPU =
-    { mode : Mode
-    , vram : RAM
-    , line : Int
-    , lineCompare : Int
-    , scrollX : Int
-    , scrollY : Int
-    , windowX : Int
-    , windowY : Int
-    , lcdc : Int
-    , sprites : Array Sprite
-    , screen : GameBoyScreen
-    , lastCompleteFrame : Maybe GameBoyScreen
-    , cyclesSinceLastCompleteFrame : Int
-    , backgroundPalette : Int
-    , objectPalette0 : Int
-    , objectPalette1 : Int
-    , triggeredInterrupt : PPUInterrupt
-    , lcdStatus : Int
-
-    {-
-       We omit every other frame to increase emulation performance. Omitted frames are still emulated, but no pixels will be
-       produced - speeding up the emulation at the cost of halved refresh rate (30fps). Omitted frames will use the same pixels as the
-       previous frame.
-    -}
-    , omitFrame : Bool
-    }
-
-
-type Mode
-    = OamSearch
-    | PixelTransfer
-    | HBlank
-    | VBlank
-
-
-type PPUInterrupt
-    = VBlankInterrupt
-    | HBlankInterrupt
-    | LineCompareInterrupt
-    | OamInterrupt
-    | NoInterrupt
+import Model exposing (Mode, PPU, PPUInterrupt, RAM, Sprite)
 
 
 

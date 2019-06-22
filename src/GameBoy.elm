@@ -1,6 +1,5 @@
 module GameBoy exposing
-    ( GameBoy
-    , drainAudioBuffer
+    ( drainAudioBuffer
     , drainBuffers
     , init
     , isAPUEnabled
@@ -21,30 +20,14 @@ module GameBoy exposing
     , setWorkRamBank1
     )
 
-import Component.APU as APU exposing (APU)
+import Component.APU as APU
 import Component.CPU as CPU exposing (CPU)
-import Component.Cartridge exposing (Cartridge)
 import Component.Joypad as Joypad exposing (GameBoyButton(..), Joypad)
 import Component.PPU as PPU
 import Component.PPU.GameBoyScreen exposing (GameBoyScreen)
-import Component.PPU.Types exposing (PPU)
-import Component.RAM as RAM exposing (RAM)
+import Component.RAM as RAM
 import Component.Timer as Timer exposing (Timer)
-
-
-type alias GameBoy =
-    { cpu : CPU
-    , ppu : PPU
-    , timer : Timer
-    , apu : APU
-    , workRamBank0 : RAM
-    , workRamBank1 : RAM
-    , hram : RAM
-    , bootRomDisabled : Bool
-    , cartridge : Cartridge
-    , joypad : Joypad
-    , lastInstructionCycles : Int
-    }
+import Model exposing (APU, Cartridge, GameBoy, PPU, RAM(..))
 
 
 init : Cartridge -> Bool -> GameBoy

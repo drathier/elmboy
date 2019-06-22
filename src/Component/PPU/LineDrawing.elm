@@ -6,9 +6,10 @@ import Component.PPU.Constants exposing (backgroundMapHeight, backgroundMapWidth
 import Component.PPU.GameBoyScreen as GameBoyScreen
 import Component.PPU.LineBuffer as LineBuffer
 import Component.PPU.Pixel as Pixel exposing (PixelSource(..), RawPixel)
-import Component.PPU.Types as PPUTypes exposing (PPU, Sprite)
-import Component.RAM as RAM exposing (RAM)
+import Component.PPU.Types as PPUTypes
+import Component.RAM as RAM
 import Constants
+import Model exposing (PPU, RAM, Sprite)
 import Types exposing (MemoryAddress)
 import Util
 

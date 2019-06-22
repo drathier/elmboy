@@ -1,6 +1,5 @@
 module Component.APU.WaveChannel exposing
-    ( WaveChannel
-    , clockLengthCounter
+    ( clockLengthCounter
     , clockTimer
     , init
     , readNRx0
@@ -21,24 +20,10 @@ module Component.APU.WaveChannel exposing
 
 import Bitwise
 import Component.APU.Constants as APUConstants
-import Component.RAM as RAM exposing (RAM)
+import Component.RAM as RAM
 import Constants
+import Model exposing (RAM, WaveChannel)
 import Util
-
-
-type alias WaveChannel =
-    { waveRam : RAM
-    , frequency : Int
-    , wavePosition : Int
-    , timerValue : Int
-    , dacPower : Bool
-    , enabled : Bool
-    , volume : Int
-
-    -- Length
-    , lengthCounter : Int
-    , lengthEnabled : Bool
-    }
 
 
 init : WaveChannel

@@ -1,6 +1,5 @@
 module Component.RAM exposing
-    ( RAM
-    , init
+    ( init
     , initZero
     , readWord8
     , readWord8Slice
@@ -8,12 +7,9 @@ module Component.RAM exposing
     )
 
 import Array exposing (Array)
+import Model exposing (RAM(..))
 import Random
 import Types exposing (MemoryAddress)
-
-
-type RAM
-    = RAM (Array Int)
 
 
 init : Int -> RAM

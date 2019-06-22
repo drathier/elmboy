@@ -1,6 +1,5 @@
 module Component.APU exposing
-    ( APU
-    , drainAudioBuffer
+    ( drainAudioBuffer
     , emulate
     , init
     , readNR10
@@ -54,37 +53,11 @@ import Bitwise
 import Component.APU.Constants as APUConstants
 import Component.APU.NoiseChannel as NoiseChannel exposing (NoiseChannel)
 import Component.APU.PulseChannel as PulseChannel exposing (PulseChannel)
-import Component.APU.WaveChannel as WaveChannel exposing (WaveChannel)
+import Component.APU.WaveChannel as WaveChannel
 import Constants
+import Model exposing (APU, WaveChannel)
 import Util
 
-
-type alias APU =
-    { channel1 : PulseChannel
-    , channel2 : PulseChannel
-    , channel3 : WaveChannel
-    , channel4 : NoiseChannel
-    , sampleBuffer : List ( Float, Float )
-    , cycleAccumulator : Int
-    , frameSequencerCounter : Int
-    , frameSequence : Int
-    , enabled : Bool
-    , powerOn : Bool
-    , leftVolume : Int
-    , rightVolume : Int
-    , vinLeftEnable : Bool
-    , vinRightEnable : Bool
-    , enabledChannels :
-        { channel1Left : Bool
-        , channel2Left : Bool
-        , channel3Left : Bool
-        , channel4Left : Bool
-        , channel1Right : Bool
-        , channel2Right : Bool
-        , channel3Right : Bool
-        , channel4Right : Bool
-        }
-    }
 
 
 init : Bool -> APU
