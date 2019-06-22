@@ -6,3 +6,5 @@ elm-stuff
 node_modules
 repl-temp-*
 /benchmarks/index.html
+
+elm-home/
