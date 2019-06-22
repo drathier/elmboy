@@ -3,7 +3,6 @@ module Model exposing (ErrorModal, Model, SaveAttemptStatus(..))
 import Bootstrap.Modal as Modal
 import Component.PPU.GameBoyScreen exposing (GameBoyScreen)
 import GameBoy exposing (GameBoy)
-import Url
 
 
 type alias Model =
@@ -16,7 +15,6 @@ type alias Model =
     , skipNextFrame : Bool
     , lastSaveAttempt : SaveAttemptStatus
     , currentSaveGameName : String
-    , fullUrlInCaseWeWantToResetTheApp : Url.Url
     }
 
 

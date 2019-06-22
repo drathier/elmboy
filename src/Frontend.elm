@@ -2,6 +2,7 @@ module Frontend exposing (app)
 
 import Bootstrap.Modal as Modal
 import Browser.Events
+import Browser.Navigation
 import Bytes
 import Bytes.Decode
 import Component.Cartridge as Cartridge
@@ -67,21 +68,24 @@ view model =
         View.Emulator.view canvasId model
 
 
-init : () -> Url.Url -> ( Model, Cmd FrontendMsg )
-init _ url =
-    ( { gameBoy = Nothing
-      , gameBoyScreen = GameBoyScreen.empty
-      , emulateOnAnimationFrame = False
-      , frameTimes = []
-      , errorModal = Nothing
-      , debuggerEnabled = False
-      , skipNextFrame = False
-      , lastSaveAttempt = SaveIdle
-      , currentSaveGameName = url.path
-      , fullUrlInCaseWeWantToResetTheApp = url
-      }
-    , Msg.sendToBackend 5000 SendSaveStateToBackendFeedback (Msg.LoadSavestate url.path)
+init : Url.Url -> Browser.Navigation.Key -> ( Model, Cmd FrontendMsg )
+init { path } _ =
+    ( { initModel | currentSaveGameName = path }
+    , Msg.sendToBackend 5000 SendSaveStateToBackendFeedback (Msg.LoadSavestate path)
     )
+
+
+initModel =
+    { gameBoy = Nothing
+    , gameBoyScreen = GameBoyScreen.empty
+    , emulateOnAnimationFrame = False
+    , frameTimes = []
+    , errorModal = Nothing
+    , debuggerEnabled = False
+    , skipNextFrame = False
+    , lastSaveAttempt = SaveIdle
+    , currentSaveGameName = ""
+    }
 
 
 update : FrontendMsg -> Model -> ( Model, Cmd FrontendMsg )
@@ -132,7 +136,7 @@ update msg model =
             )
 
         Reset ->
-            init () model.fullUrlInCaseWeWantToResetTheApp
+            ( initModel, Cmd.none )
 
         Pause ->
             ( { model | emulateOnAnimationFrame = False }, Cmd.none )
