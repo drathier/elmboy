@@ -1,7 +1,6 @@
-module Main exposing (main)
+module Frontend exposing (app)
 
 import Bootstrap.Modal as Modal
-import Browser
 import Browser.Events
 import Bytes
 import Bytes.Decode
@@ -12,28 +11,54 @@ import Emulator
 import File
 import File.Select
 import GameBoy
-import Html exposing (Html)
-import Json.Decode as Decode
-import Model exposing (Model)
-import Msg exposing (Msg(..))
+import Html exposing (Html, div)
+import Html.Attributes exposing (href, rel)
+import Json.Decode as Decode exposing (Error(..))
+import Lamdera.Frontend as Frontend
+import Model exposing (Model, SaveAttemptStatus(..))
+import Msg exposing (FrontendMsg(..), ToBackend(..), ToFrontend(..))
 import Task
 import UI.KeyDecoder
+import Url
 import Util
 import View.Debugger
 import View.Emulator
 
 
-main : Program () Model Msg
-main =
-    Browser.element
-        { view = view
-        , init = init
+app =
+    Frontend.application
+        { init = init
+        , onUrlRequest = \_ -> NoOp
+        , onUrlChange = \_ -> NoOp
         , update = update
+        , updateFromBackend = updateFromBackend
         , subscriptions = subscriptions
+        , view =
+            \model ->
+                { title = "Lamdera Collaborative Markdown"
+                , body =
+                    [ div []
+                        [ Html.node "link" [ rel "stylesheet", href "src.f8b043ed.css" ] []
+                        , view model
+                        ]
+                    ]
+                }
         }
 
 
-view : Model -> Html Msg
+updateFromBackend : Msg.ToFrontend -> Model -> ( Model, Cmd FrontendMsg )
+updateFromBackend toFrontend model =
+    case toFrontend of
+        FetchedSaveState (Just gameboy) ->
+            ( { model | gameBoy = Just gameboy }, Cmd.none )
+
+        FetchedSaveState Nothing ->
+            -- TODO: tell user savestate fetch failed
+            -- don't overwrite the gameBoy state with Nothing
+            ( model, Cmd.none )
+
+
+view : Model -> Html FrontendMsg
 view model =
     if model.debuggerEnabled then
         View.Debugger.view canvasId model
@@ -42,8 +67,8 @@ view model =
         View.Emulator.view canvasId model
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
+init : () -> Url.Url -> ( Model, Cmd FrontendMsg )
+init _ url =
     ( { gameBoy = Nothing
       , gameBoyScreen = GameBoyScreen.empty
       , emulateOnAnimationFrame = False
@@ -51,12 +76,15 @@ init _ =
       , errorModal = Nothing
       , debuggerEnabled = False
       , skipNextFrame = False
+      , lastSaveAttempt = SaveIdle
+      , currentSaveGameName = url.path
+      , fullUrlInCaseWeWantToResetTheApp = url
       }
-    , Cmd.none
+    , Msg.sendToBackend 5000 SendSaveStateToBackendFeedback (Msg.LoadSavestate url.path)
     )
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : FrontendMsg -> Model -> ( Model, Cmd FrontendMsg )
 update msg model =
     case msg of
         AnimationFrameDelta time ->
@@ -74,17 +102,17 @@ update msg model =
                                 |> Emulator.emulateCycles cyclesToEmulate
                                 |> GameBoy.drainBuffers
 
-                        (shouldSkipNextFrame, gbScreen) =
+                        ( shouldSkipNextFrame, gbScreen ) =
                             case screen of
                                 Just newScreen ->
                                     if model.skipNextFrame then
-                                        (False, model.gameBoyScreen)
+                                        ( False, model.gameBoyScreen )
 
                                     else
-                                        (True, newScreen)
+                                        ( True, newScreen )
 
                                 Nothing ->
-                                    (False, model.gameBoyScreen)
+                                    ( False, model.gameBoyScreen )
                     in
                     ( { model | skipNextFrame = shouldSkipNextFrame, gameBoy = Just emulatedGameBoy, gameBoyScreen = gbScreen, frameTimes = time :: List.take 30 model.frameTimes }
                     , Cmd.none
@@ -104,7 +132,7 @@ update msg model =
             )
 
         Reset ->
-            init ()
+            init () model.fullUrlInCaseWeWantToResetTheApp
 
         Pause ->
             ( { model | emulateOnAnimationFrame = False }, Cmd.none )
@@ -148,8 +176,28 @@ update msg model =
         CloseErrorModal ->
             ( { model | errorModal = Nothing }, Cmd.none )
 
+        NoOp ->
+            ( model, Cmd.none )
 
-subscriptions : Model -> Sub Msg
+        SendSaveStateToBackendFeedback (Ok ()) ->
+            ( { model | lastSaveAttempt = SaveSuccess }, Cmd.none )
+
+        SendSaveStateToBackendFeedback (Err _) ->
+            ( { model | lastSaveAttempt = SaveFailure }, Cmd.none )
+
+        SaveTheGame ->
+            case model.gameBoy of
+                Nothing ->
+                    -- how did you save a game without a cartridge in?
+                    ( model, Cmd.none )
+
+                Just gb ->
+                    ( { model | lastSaveAttempt = SaveInProgress }
+                    , Msg.sendToBackend 5000 SendSaveStateToBackendFeedback (SaveMyGameState model.currentSaveGameName gb)
+                    )
+
+
+subscriptions : Model -> Sub FrontendMsg
 subscriptions model =
     let
         animationFrameSubscription =

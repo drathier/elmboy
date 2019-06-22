@@ -1,8 +1,9 @@
-module Model exposing (ErrorModal, Model)
+module Model exposing (ErrorModal, Model, SaveAttemptStatus(..))
 
 import Bootstrap.Modal as Modal
 import Component.PPU.GameBoyScreen exposing (GameBoyScreen)
 import GameBoy exposing (GameBoy)
+import Url
 
 
 type alias Model =
@@ -13,6 +14,9 @@ type alias Model =
     , debuggerEnabled : Bool
     , emulateOnAnimationFrame : Bool
     , skipNextFrame : Bool
+    , lastSaveAttempt : SaveAttemptStatus
+    , currentSaveGameName : String
+    , fullUrlInCaseWeWantToResetTheApp : Url.Url
     }
 
 
@@ -21,3 +25,10 @@ type alias ErrorModal =
     , title : String
     , body : String
     }
+
+
+type SaveAttemptStatus
+    = SaveFailure
+    | SaveSuccess
+    | SaveInProgress
+    | SaveIdle

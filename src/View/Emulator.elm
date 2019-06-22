@@ -12,11 +12,11 @@ import Html exposing (Html, a, div, em, h1, h4, hr, i, kbd, p, small, span, stro
 import Html.Attributes exposing (class, href, target)
 import Html.Lazy
 import Model exposing (Model)
-import Msg exposing (Msg(..))
+import Msg exposing (FrontendMsg(..))
 import View.Common exposing (errorModalView, romSelector, screen)
 
 
-view : String -> Model -> Html Msg
+view : String -> Model -> Html FrontendMsg
 view canvasId model =
     let
         leftContent =
@@ -32,7 +32,7 @@ view canvasId model =
                 Just gameBoy ->
                     div []
                         [ screen model.gameBoyScreen canvasId
-                        , Html.Lazy.lazy3 emulationToolbar model.emulateOnAnimationFrame (GameBoy.isAPUEnabled gameBoy) model.frameTimes
+                        , Html.Lazy.lazy4 emulationToolbar model.lastSaveAttempt model.emulateOnAnimationFrame (GameBoy.isAPUEnabled gameBoy) model.frameTimes
                         ]
     in
     scaffolding leftContent (Html.Lazy.lazy (always projectDescription) ())
@@ -42,7 +42,7 @@ view canvasId model =
 -- Internal
 
 
-scaffolding : Html Msg -> Html Msg -> Html Msg
+scaffolding : Html FrontendMsg -> Html FrontendMsg -> Html FrontendMsg
 scaffolding contentLeft contentRight =
     Grid.container []
         [ Grid.row [ Row.attrs [ Spacing.mt3 ] ]
@@ -58,7 +58,7 @@ scaffolding contentLeft contentRight =
         ]
 
 
-pageHeader : Html Msg
+pageHeader : Html FrontendMsg
 pageHeader =
     div [ class "page-header" ]
         [ h1 [] [ text "Elmboy", small [ class "text-muted", Display.block ] [ text "A Nintendo™ Game Boy™ Emulator written in Elm" ] ]
@@ -69,7 +69,7 @@ pageHeader =
         ]
 
 
-projectDescription : Html Msg
+projectDescription : Html FrontendMsg
 projectDescription =
     div [ class "project-description" ]
         [ h4 [] [ text "Quick Start" ]
@@ -102,8 +102,8 @@ projectDescription =
         ]
 
 
-emulationToolbar : Bool -> Bool -> List Float -> Html Msg
-emulationToolbar emulateOnAnimationFrame apuEnabled frameTimes =
+emulationToolbar : Model.SaveAttemptStatus -> Bool -> Bool -> List Float -> Html FrontendMsg
+emulationToolbar saveAttemptStatus emulateOnAnimationFrame apuEnabled frameTimes =
     let
         pauseResumeButton =
             if emulateOnAnimationFrame then
@@ -111,6 +111,21 @@ emulationToolbar emulateOnAnimationFrame apuEnabled frameTimes =
 
             else
                 ButtonGroup.button [ Button.secondary, Button.onClick Resume ] [ i [ class "fa fa-play" ] [] ]
+
+        saveButton =
+            Button.button [ Button.secondary, Button.onClick SaveTheGame ] <|
+                case saveAttemptStatus of
+                    Model.SaveFailure ->
+                        [ i [ class "fas fa-exclamation-triangle" ] [] ]
+
+                    Model.SaveSuccess ->
+                        [ i [ class "fas fa-save" ] [] ]
+
+                    Model.SaveInProgress ->
+                        [ i [ class "fas fa-sync-alt" ] [] ]
+
+                    Model.SaveIdle ->
+                        [ i [ class "fas fa-save" ] [] ]
 
         apuControlButton =
             if apuEnabled then
@@ -144,5 +159,6 @@ emulationToolbar emulateOnAnimationFrame apuEnabled frameTimes =
             , ButtonGroup.button [ Button.secondary, Button.onClick Reset ] [ i [ class "fa fa-power-off" ] [], text " Reset" ]
             ]
         , apuControlButton
+        , saveButton
         , span [ class "fps-counter" ] [ text fps ]
         ]

@@ -9,10 +9,10 @@ import Html.Events exposing (onClick)
 import Html.Keyed as K
 import Html.Lazy
 import Model exposing (ErrorModal)
-import Msg exposing (Msg(..))
+import Msg exposing (FrontendMsg(..))
 
 
-errorModalView : ErrorModal -> Html Msg
+errorModalView : ErrorModal -> Html FrontendMsg
 errorModalView errorModal =
     Modal.config CloseErrorModal
         |> Modal.large
@@ -29,12 +29,12 @@ errorModalView errorModal =
         |> Modal.view errorModal.visibility
 
 
-romSelector : Html Msg
+romSelector : Html FrontendMsg
 romSelector =
     div [ class "screen-wrapper" ] [ div [ class "rom-selector", onClick OpenFileSelect ] [] ]
 
 
-screen : GameBoyScreen -> String -> Html Msg
+screen : GameBoyScreen -> String -> Html FrontendMsg
 screen gbs canvasId =
     div [ class "screen-wrapper" ]
         [ textScreenLines gbs
@@ -43,7 +43,7 @@ screen gbs canvasId =
         ]
 
 
-textScreenLines : GameBoyScreen -> Html Msg
+textScreenLines : GameBoyScreen -> Html FrontendMsg
 textScreenLines gbs =
     div []
         [ pre
@@ -80,7 +80,7 @@ chunk col pixels curr res =
                 chunk (col + 1) pxRest (colorChar px :: curr) res
 
 
-textScreen : GameBoyScreen -> Html Msg
+textScreen : GameBoyScreen -> Html FrontendMsg
 textScreen gbs =
     node "pre"
         [ style "font-family" "Consolas, Liberation Mono, Menlo, SFMono-Regular, monospace"
@@ -108,7 +108,7 @@ textScreen gbs =
         ]
 
 
-textAreaScreen : GameBoyScreen -> Html Msg
+textAreaScreen : GameBoyScreen -> Html FrontendMsg
 textAreaScreen gbs =
     node "textarea"
         [ style "font-family" "Consolas, Liberation Mono, Menlo, SFMono-Regular, monospace"
