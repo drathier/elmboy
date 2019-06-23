@@ -69,10 +69,15 @@ view model =
 
 
 init : Url.Url -> Browser.Navigation.Key -> ( Model, Cmd FrontendMsg )
-init { path } _ =
-    ( { initModel | currentSaveGameName = path }
-    , Msg.sendToBackend 5000 SendSaveStateToBackendFeedback (Msg.LoadSavestate path)
-    )
+init { fragment } _ =
+    case fragment of
+        Just v ->
+            ( { initModel | currentSaveGameName = v }
+            , Msg.sendToBackend 5000 SendSaveStateToBackendFeedback (Msg.LoadSavestate v)
+            )
+
+        Nothing ->
+            ( initModel, Cmd.none )
 
 
 initModel =
