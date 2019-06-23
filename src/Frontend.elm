@@ -49,6 +49,7 @@ app =
 
 updateFromBackend : Msg.ToFrontend -> Model -> ( Model, Cmd FrontendMsg )
 updateFromBackend toFrontend model =
+    let _ = Debug.log "updateFromBackend" toFrontend in
     case toFrontend of
         FetchedSaveState (Just gameboy) ->
             ( { model | gameBoy = Just gameboy, emulateOnAnimationFrame = True }, Cmd.none )
@@ -70,6 +71,7 @@ view model =
 
 init : Url.Url -> Browser.Navigation.Key -> ( Model, Cmd FrontendMsg )
 init { fragment } _ =
+    let _ = Debug.log "init" fragment in
     case fragment of
         Just v ->
             ( { initModel | currentSaveGameName = v }
@@ -95,6 +97,7 @@ initModel =
 
 update : FrontendMsg -> Model -> ( Model, Cmd FrontendMsg )
 update msg model =
+    let _ = Debug.log "update" msg in
     case msg of
         AnimationFrameDelta time ->
             case model.gameBoy of
