@@ -35,7 +35,7 @@ updateFromFrontend clientId msg model =
 
         LoadSavestate url ->
             ( model
-            , Msg.sendToFrontend 5000 clientId SendSavestateToClientFeedback (FetchedSaveState (Dict.get url model.savestates))
+            , Msg.sendToFrontend 30000 clientId SendSavestateToClientFeedback (FetchedSaveState (Dict.get url model.savestates))
             )
 
 

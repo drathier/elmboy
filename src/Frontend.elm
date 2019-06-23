@@ -73,7 +73,7 @@ init { fragment } _ =
     case fragment of
         Just v ->
             ( { initModel | currentSaveGameName = v }
-            , Msg.sendToBackend 5000 SendSaveStateToBackendFeedback (Msg.LoadSavestate v)
+            , Msg.sendToBackend 30000 SendSaveStateToBackendFeedback (Msg.LoadSavestate v)
             )
 
         Nothing ->
@@ -202,7 +202,7 @@ update msg model =
 
                 Just gb ->
                     ( { model | lastSaveAttempt = SaveInProgress }
-                    , Msg.sendToBackend 5000 SendSaveStateToBackendFeedback (SaveMyGameState model.currentSaveGameName gb)
+                    , Msg.sendToBackend 30000 SendSaveStateToBackendFeedback (SaveMyGameState model.currentSaveGameName gb)
                     )
 
 
