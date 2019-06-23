@@ -51,7 +51,7 @@ updateFromBackend : Msg.ToFrontend -> Model -> ( Model, Cmd FrontendMsg )
 updateFromBackend toFrontend model =
     case toFrontend of
         FetchedSaveState (Just gameboy) ->
-            ( { model | gameBoy = Just gameboy }, Cmd.none )
+            ( { model | gameBoy = Just gameboy, emulateOnAnimationFrame = True }, Cmd.none )
 
         FetchedSaveState Nothing ->
             -- TODO: tell user savestate fetch failed
