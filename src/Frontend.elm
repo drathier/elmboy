@@ -97,7 +97,13 @@ initModel =
 
 update : FrontendMsg -> Model -> ( Model, Cmd FrontendMsg )
 update msg model =
-    let _ = Debug.log "update" msg in
+    let _ =
+            case msg of
+                AnimationFrameDelta _ ->
+                    msg
+                _ ->
+                    Debug.log "update" msg
+    in
     case msg of
         AnimationFrameDelta time ->
             case model.gameBoy of
