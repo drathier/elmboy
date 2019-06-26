@@ -113,7 +113,12 @@ emulationToolbar saveAttemptStatus emulateOnAnimationFrame apuEnabled frameTimes
                 ButtonGroup.button [ Button.secondary, Button.onClick Resume ] [ i [ class "fa fa-play" ] [] ]
 
         saveButton =
-            Button.button [ Button.secondary, Button.onClick SaveTheGame ] <|
+            Button.button
+                [ Button.secondary
+                , Button.onClick SaveTheGame
+                , Button.attrs [ class "audio-controls" ]
+                ]
+            <|
                 case saveAttemptStatus of
                     Model.SaveFailure ->
                         [ i [ class "fas fa-exclamation-triangle" ] [] ]
@@ -126,23 +131,6 @@ emulationToolbar saveAttemptStatus emulateOnAnimationFrame apuEnabled frameTimes
 
                     Model.SaveIdle ->
                         [ i [ class "fas fa-save" ] [] ]
-
-        apuControlButton =
-            if apuEnabled then
-                Button.button
-                    [ Button.secondary
-                    , Button.onClick DisableAPU
-                    , Button.attrs [ class "audio-controls" ]
-                    ]
-                    [ i [ class "fa fa-volume-mute" ] [] ]
-
-            else
-                Button.button
-                    [ Button.secondary
-                    , Button.onClick EnableAPU
-                    , Button.attrs [ class "audio-controls" ]
-                    ]
-                    [ i [ class "fa fa-volume-up" ] [] ]
 
         frameCount =
             toFloat (List.length frameTimes)
@@ -158,7 +146,6 @@ emulationToolbar saveAttemptStatus emulateOnAnimationFrame apuEnabled frameTimes
             [ pauseResumeButton
             , ButtonGroup.button [ Button.secondary, Button.onClick Reset ] [ i [ class "fa fa-power-off" ] [], text " Reset" ]
             ]
-        , apuControlButton
         , saveButton
         , span [ class "fps-counter" ] [ text fps ]
         ]
