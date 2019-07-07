@@ -15,7 +15,7 @@ import GameBoy
 import Html exposing (Html, div)
 import Html.Attributes exposing (href, rel)
 import Json.Decode as Decode exposing (Error(..))
-import Lamdera.Frontend as Frontend
+import Lamdera.Frontend as Frontend exposing (sendToBackend)
 import Model exposing (Model, SaveAttemptStatus(..))
 import Msg exposing (FrontendMsg(..), ToBackend(..), ToFrontend(..))
 import Task
@@ -73,7 +73,7 @@ init { fragment } _ =
     case fragment of
         Just v ->
             ( { initModel | currentSaveGameName = v }
-            , Msg.sendToBackend 30000 SendSaveStateToBackendFeedback (Msg.LoadSavestate v)
+            , sendToBackend 30000 SendSaveStateToBackendFeedback (Msg.LoadSavestate v)
             )
 
         Nothing ->
@@ -202,7 +202,7 @@ update msg model =
 
                 Just gb ->
                     ( { model | lastSaveAttempt = SaveInProgress }
-                    , Msg.sendToBackend 30000 SendSaveStateToBackendFeedback (SaveMyGameState model.currentSaveGameName gb)
+                    , sendToBackend 30000 SendSaveStateToBackendFeedback (SaveMyGameState model.currentSaveGameName gb)
                     )
 
 

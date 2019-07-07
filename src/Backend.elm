@@ -1,7 +1,7 @@
 module Backend exposing (Model, app, init, update, updateFromFrontend)
 
 import Dict exposing (Dict)
-import Lamdera.Backend
+import Lamdera.Backend exposing (sendToFrontend)
 import Lamdera.Types exposing (ClientId)
 import Model exposing (GameBoy)
 import Msg exposing (..)
@@ -35,7 +35,7 @@ updateFromFrontend clientId msg model =
 
         LoadSavestate url ->
             ( model
-            , Msg.sendToFrontend 30000 clientId SendSavestateToClientFeedback (FetchedSaveState (Dict.get url model.savestates))
+            , sendToFrontend 30000 clientId SendSavestateToClientFeedback (FetchedSaveState (Dict.get url model.savestates))
             )
 
 

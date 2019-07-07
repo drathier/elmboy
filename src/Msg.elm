@@ -1,9 +1,7 @@
-module Msg exposing (BackendMsg(..), FrontendMsg(..), ToBackend(..), ToFrontend(..), sendToBackend, sendToFrontend)
+module Msg exposing (BackendMsg(..), FrontendMsg(..), ToBackend(..), ToFrontend(..))
 
 import Component.Joypad exposing (GameBoyButton)
 import File exposing (File)
-import Lamdera.Backend
-import Lamdera.Frontend
 import Lamdera.Types exposing (ClientId, Milliseconds, WsError)
 import Model exposing (Cartridge, GameBoy)
 
@@ -37,22 +35,3 @@ type ToFrontend
 type ToBackend
     = SaveMyGameState String GameBoy
     | LoadSavestate String
-
-
-sendToBackend :
-    Milliseconds
-    -> (Result WsError () -> FrontendMsg)
-    -> ToBackend
-    -> Cmd FrontendMsg
-sendToBackend =
-    Lamdera.Frontend.sendToBackend
-
-
-sendToFrontend :
-    Milliseconds
-    -> ClientId
-    -> (Result WsError () -> BackendMsg)
-    -> ToFrontend
-    -> Cmd BackendMsg
-sendToFrontend =
-    Lamdera.Backend.sendToFrontend
